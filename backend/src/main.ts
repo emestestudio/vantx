@@ -10,9 +10,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 10000
 
-  await app.listen(port, '0.0.0.0') // 👈 ESTA LÍNEA ES CLAVE
+  await app.listen(port, '0.0.0.0')
 
-  console.log(`🚀 RUNNING ON ${port}`)
+  console.log(`🚀 Server running on port ${port}`)
 }
-
 bootstrap()
