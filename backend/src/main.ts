@@ -7,7 +7,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe())
 
-  const port = process.env.PORT
+  const port = process.env.PORT || '10000'
 
   await app.listen(port, '0.0.0.0')
 
