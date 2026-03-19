@@ -8,35 +8,28 @@ datasource db {
 }
 
 model Company {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name      String
-  rut       String
-  email     String
-  phone     String?
   createdAt DateTime @default(now())
-
-  users    User[]
-  projects Project[]
+  users     User[]
+  projects  Project[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
-  name      String
-  companyId Int
+  name      String?
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
-
-  company Company @relation(fields: [companyId], references: [id])
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   name        String
   description String?
-  status      String   @default("pending")
-  companyId   Int
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
   createdAt   DateTime @default(now())
-
-  company Company @relation(fields: [companyId], references: [id])
 }
