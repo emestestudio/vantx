@@ -1,24 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class CompaniesService {
-
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { name: string; rut: string; email?: string; phone?: string }) {
+  async create(name: string) {
     return this.prisma.company.create({
-      data: {
-        name: data.name,
-        rut: data.rut,
-        email: data.email,
-        phone: data.phone
-      }
-    });
+      data: { name },
+    })
+  }
+
+  async findById(id: string) {
+    return this.prisma.company.findUnique({ where: { id } })
   }
 
   async findAll() {
-    return this.prisma.company.findMany();
+    return this.prisma.company.findMany({
+      orderBy: { createdAt: 'desc' },
+    })
   }
-
 }
