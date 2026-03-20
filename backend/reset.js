@@ -1,0 +1,1 @@
+const {PrismaClient} = require("@prisma/client"); const p = new PrismaClient(); p.user.update({where:{email:"admin@miempresa.com"}, data:{password:"$2b$10$yD32ao7ogW1M9VCU56gekOh1Xok1.GWuPgxW9n1eNSOou8GwaSjJ."}}).then(r => {console.log("OK", r.email); p.$disconnect()})

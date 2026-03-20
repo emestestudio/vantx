@@ -1,36 +1,33 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { UsersService } from '../users/users.service'
-import * as bcrypt from 'bcrypt'
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
   async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email)
-    if (!user) throw new UnauthorizedException('Credenciales inválidas')
-
-    const valid = await bcrypt.compare(password, user.password)
-    if (!valid) throw new UnauthorizedException('Credenciales inválidas')
-
-    const payload = { userId: user.id, companyId: user.companyId }
-    const token = this.jwtService.sign(payload)
-
-    return { token, userId: user.id, companyId: user.companyId }
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) throw new UnauthorizedException('Credenciales incorrectas');
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new UnauthorizedException('Credenciales incorrectas');
+    const payload = { sub: user.id, companyId: user.companyId };
+    return { access_token: this.jwtService.sign(payload) };
   }
 
-  async register(email: string, password: string, name: string, companyId: string) {
-    const exists = await this.usersService.findByEmail(email)
-    if (exists) throw new UnauthorizedException('El email ya está registrado')
-
-    const user = await this.usersService.create({ email, password, name, companyId })
-    const payload = { userId: user.id, companyId: user.companyId }
-    const token = this.jwtService.sign(payload)
-
-    return { token, userId: user.id, companyId: user.companyId }
+  async register(companyName: string, email: string, password: string, name: string) {
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) throw new ConflictException('El email ya está registrado');
+    const hashed = await bcrypt.hash(password, 10);
+    const company = await this.prisma.company.create({ data: { name: companyName } });
+    const user = await this.prisma.user.create({
+      data: { email, password: hashed, name, companyId: company.id },
+    });
+    const payload = { sub: user.id, companyId: user.companyId };
+    return { access_token: this.jwtService.sign(payload) };
   }
 }
