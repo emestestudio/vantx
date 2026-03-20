@@ -12,8 +12,16 @@ export class ProjectsService {
     })
   }
 
+  async findOne(id: string) {
+    return this.prisma.project.findUnique({ where: { id } })
+  }
+
   async create(data: { name: string; description?: string; companyId: string }) {
     return this.prisma.project.create({ data })
+  }
+
+  async update(id: string, data: { name?: string; description?: string }) {
+    return this.prisma.project.update({ where: { id }, data })
   }
 
   async delete(id: string) {
