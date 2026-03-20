@@ -1,17 +1,16 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
-
-  app.useGlobalPipes(new ValidationPipe())
-
-  const port = process.env.PORT || '10000'
-
-  await app.listen(port, '0.0.0.0')
-
-  console.log(`🚀 Server running on port ${port}`)
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://vantx.vercel.app',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  });
+  await app.listen(process.env.PORT ?? 3000);
 }
-
-bootstrap()
+bootstrap();
