@@ -16,7 +16,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Error');
+      if (!res.ok) throw new Error(data.message || 'Error al iniciar sesión');
       localStorage.setItem('token', data.access_token);
       router.push('/dashboard');
     } catch (err: any) { setError(err.message); }
@@ -28,9 +28,12 @@ export default function LoginPage() {
         <h1 style={{marginBottom:'1.5rem',fontSize:'1.5rem',fontWeight:'bold'}}>Iniciar Sesión</h1>
         {error && <p style={{color:'red',marginBottom:'1rem'}}>{error}</p>}
         <form onSubmit={handleSubmit}>
-          <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required style={{width:'100%',padding:'0.75rem',marginBottom:'1rem',border:'1px solid #ddd',borderRadius:'4px',boxSizing:'border-box'}}/>
-          <input type="password" placeholder="Contraseña" value={password} onChange={e=>setPassword(e.target.value)} required style={{width:'100%',padding:'0.75rem',marginBottom:'1rem',border:'1px solid #ddd',borderRadius:'4px',boxSizing:'border-box'}}/>
-          <button type="submit" disabled={loading} style={{width:'100%',padding:'0.75rem',background:'#0070f3',color:'white',border:'none',borderRadius:'4px',cursor:'pointer'}}>
+          <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required
+            style={{width:'100%',padding:'0.75rem',marginBottom:'1rem',border:'1px solid #ddd',borderRadius:'4px',boxSizing:'border-box'}}/>
+          <input type="password" placeholder="Contraseña" value={password} onChange={e=>setPassword(e.target.value)} required
+            style={{width:'100%',padding:'0.75rem',marginBottom:'1rem',border:'1px solid #ddd',borderRadius:'4px',boxSizing:'border-box'}}/>
+          <button type="submit" disabled={loading}
+            style={{width:'100%',padding:'0.75rem',background:'#0070f3',color:'white',border:'none',borderRadius:'4px',cursor:'pointer',fontSize:'1rem'}}>
             {loading ? 'Cargando...' : 'Entrar'}
           </button>
         </form>
